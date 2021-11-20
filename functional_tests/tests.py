@@ -118,3 +118,5 @@ def test_multiple_users_can_start_lists_at_different_urls(live_server, browser):
     page_text = browser.find_element(By.TAG_NAME, "body").text
     assert "Buy peacock feathers" not in page_text
     assert "Buy milk" in page_text
+
+    browser.quit()
