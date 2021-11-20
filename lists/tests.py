@@ -8,6 +8,7 @@ from pytest_django.asserts import assertTemplateUsed
 from lists.models import Item
 from lists.views import home_page
 
+pytestmark = pytest.mark.django_db
 
 # view tests
 
@@ -19,14 +20,36 @@ def test_home_page_returns_correct_html(client):
 
 def test_can_save_a_post_request(client):
     response = client.post("/", data={"item_text": "A new list item"})
-    assert "A new list item" in response.content.decode()
-    assertTemplateUsed(response, "home.html")
+
+    assert Item.objects.count() == 1
+    new_item = Item.objects.first()
+    assert new_item.text == "A new list item"
+
+
+def test_redirects_after_post(client):
+    response = client.post("/", data={"item_text": "A new list item"})
+    assert response.status_code == 302
+    assert response["location"] == "/"
+
+
+def test_only_saves_items_when_necessary(client):
+    client.get("/")
+    assert 0 == Item.objects.count()
+
+
+def test_displays_all_list_items(client):
+    Item.objects.create(text="itemey 1")
+    Item.objects.create(text="itemey 2")
+
+    response = client.get("/")
+
+    assert "itemey 1" in response.content.decode()
+    assert "itemey 2" in response.content.decode()
 
 
 # model tests
 
 
-@pytest.mark.django_db
 def test_saving_and_retrieveing_items():
     first_item = Item()
     first_item.text = "The first (ever) list item"
