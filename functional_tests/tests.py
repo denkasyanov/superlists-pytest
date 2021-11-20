@@ -2,6 +2,8 @@ import time
 
 import pytest
 from selenium import webdriver
+from selenium.common import exceptions
+from selenium.common.exceptions import WebDriverException
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
 
@@ -19,10 +21,30 @@ def check_for_row_in_list_table(browser, row_text):
     assert row_text in [row.text for row in rows]
 
 
-def test_can_start_a_list_and_retrieve_it_later(browser):
+MAX_WAIT = 10
+
+
+def wait_for_row_in_list_table(browser, row_text):
+    start_time = time.time()
+    while True:
+        try:
+            table = browser.find_element(By.ID, "id_list_table")
+            rows = table.find_elements(By.TAG_NAME, "tr")
+            assert "row_text" in [row.text for row in rows]
+            return
+        except (AssertionError, WebDriverException) as e:
+            if time.time() - start_time > MAX_WAIT:
+                raise e
+            time.sleep(0.5)
+
+
+# new visitor
+
+
+def test_can_start_a_list_and_retrieve_it_later(live_server, browser):
     # Edith has heard about a cool new online to-do app. She goes
     # to check out its homepage
-    browser.get("http://localhost:8000")
+    browser.get(live_server.url)
 
     # She notices the page title and header mention to-do lists
     assert "To-Do" in browser.title
@@ -42,7 +64,7 @@ def test_can_start_a_list_and_retrieve_it_later(browser):
     inputbox.send_keys(Keys.ENTER)
     time.sleep(1)
 
-    check_for_row_in_list_table(browser, "1: Buy peacock feathers")
+    wait_for_row_in_list_table(browser, "1: Buy peacock feathers")
 
     # There is still a text box inviting her to add another item. She
     # enters "Use peacock feathers to make a fly" (Edith is very methodical)
@@ -52,8 +74,8 @@ def test_can_start_a_list_and_retrieve_it_later(browser):
     time.sleep(1)
 
     # The page updates again, and now shows both items on her list
-    check_for_row_in_list_table(browser, "1: Buy peacock feathers")
-    check_for_row_in_list_table(browser, "2: Use peacock feathers to make a fly")
+    wait_for_row_in_list_table(browser, "1: Buy peacock feathers")
+    wait_for_row_in_list_table(browser, "2: Use peacock feathers to make a fly")
 
     # Edith wonders whether the site will remember her list. Then she sees
     # that the site has generated a unique URL for her -- there is some
