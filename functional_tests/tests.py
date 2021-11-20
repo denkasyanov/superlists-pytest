@@ -22,7 +22,7 @@ def check_for_row_in_list_table(browser, row_text):
     assert row_text in [row.text for row in rows]
 
 
-MAX_WAIT = 2
+MAX_WAIT = 5
 
 
 def wait_for_row_in_list_table(browser, row_text):
