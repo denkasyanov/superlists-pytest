@@ -3,7 +3,7 @@ from django.template.loader import render_to_string
 from django.urls import resolve
 
 import pytest
-from pytest_django.asserts import assertTemplateUsed
+from pytest_django.asserts import assertContains, assertTemplateUsed
 
 from lists.models import Item
 from lists.views import home_page
@@ -29,7 +29,7 @@ def test_can_save_a_post_request(client):
 def test_redirects_after_post(client):
     response = client.post("/", data={"item_text": "A new list item"})
     assert response.status_code == 302
-    assert response["location"] == "/"
+    assert response["location"] == "/lists/the-only-list-in-the-world/"
 
 
 def test_only_saves_items_when_necessary(client):
@@ -37,14 +37,21 @@ def test_only_saves_items_when_necessary(client):
     assert 0 == Item.objects.count()
 
 
-def test_displays_all_list_items(client):
+# list view tests
+
+
+def test_users_list_template(client):
+    response = client.get("/lists/the-only-list-in-the-world/")
+    assertTemplateUsed(response, "list.html")
+
+
+def test_displays_all_items(client):
     Item.objects.create(text="itemey 1")
     Item.objects.create(text="itemey 2")
 
-    response = client.get("/")
+    response = client.get("/lists/the-only-list-in-the-world/")
 
-    assert "itemey 1" in response.content.decode()
-    assert "itemey 2" in response.content.decode()
+    assertContains(response, "itemey 1")
 
 
 # model tests
