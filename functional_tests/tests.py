@@ -1,3 +1,4 @@
+import os
 import re
 import time
 
@@ -14,6 +15,17 @@ def browser():
     browser = webdriver.Firefox()
     yield browser
     browser.quit()
+
+
+@pytest.fixture
+def live_server_url(live_server):
+    staging_server = os.environ.get("STAGING_SERVER")
+    if staging_server:
+        live_server_url = "http://" + staging_server
+    else:
+        live_server_url = live_server.url
+
+    yield live_server_url
 
 
 def check_for_row_in_list_table(browser, row_text):
@@ -42,10 +54,10 @@ def wait_for_row_in_list_table(browser, row_text):
 # new visitor
 
 
-def test_can_start_a_list_for_one_user(live_server, browser):
+def test_can_start_a_list_for_one_user(live_server_url, browser):
     # Edith has heard about a cool new online to-do app. She goes
     # to check out its homepage
-    browser.get(live_server.url)
+    browser.get(live_server_url)
 
     # She notices the page title and header mention to-do lists
     assert "To-Do" in browser.title
@@ -78,9 +90,9 @@ def test_can_start_a_list_for_one_user(live_server, browser):
     # Satisfied, she goes back to sleep
 
 
-def test_multiple_users_can_start_lists_at_different_urls(live_server, browser):
+def test_multiple_users_can_start_lists_at_different_urls(live_server_url, browser):
     # Edith starts a new to-do list
-    browser.get(live_server.url)
+    browser.get(live_server_url)
     inputbox = browser.find_element(By.ID, "id_new_item")
     inputbox.send_keys("Buy peacock feathers")
     inputbox.send_keys(Keys.ENTER)
@@ -98,7 +110,7 @@ def test_multiple_users_can_start_lists_at_different_urls(live_server, browser):
     browser = webdriver.Firefox()
     # Francis visits the home page.  There is no sign of Edith's
     # list
-    browser.get(live_server.url)
+    browser.get(live_server_url)
     page_text = browser.find_element(By.TAG_NAME, "body").text
     assert "Buy peacock feathers" not in page_text
     assert "make a fly" not in page_text
@@ -122,9 +134,9 @@ def test_multiple_users_can_start_lists_at_different_urls(live_server, browser):
     browser.quit()
 
 
-def test_layout_and_styling(live_server, browser):
+def test_layout_and_styling(live_server_url, browser):
     # Edith goes to the home page
-    browser.get(live_server.url)
+    browser.get(live_server_url)
     browser.set_window_size(1024, 768)
 
     # She notices the input box is nicely centered
