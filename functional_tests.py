@@ -38,19 +38,31 @@ def test_can_start_a_list_and_retrieve_it_later(browser):
 
     table = browser.find_element(By.ID, "id_list_table")
     rows = table.find_elements(By.TAG_NAME, "tr")
-    assert any(
-        row.text == "1: Buy peacock featers" for row in rows
-    ), "New to-do item did not appear in table"
+    assert "1: Buy peacock feathers" in [
+        row.text for row in rows
+    ], f"New to-do item did not appear in table. Contents were:\n{table.text}"
 
     # There is still a text box inviting her to add another item. She
     # enters "Use peacock feathers to make a fly" (Edith is very methodical)
-    pytest.fail("Finish the test!!!")
+    inputbox = browser.find_element(By.ID, "id_new_item")
+    inputbox.send_keys("Use peacock feathers to make a fly")
+    inputbox.send_keys(Keys.ENTER)
+    time.sleep(1)
 
     # The page updates again, and now shows both items on her list
+    table = browser.find_element(By.ID, "id_list_table")
+    rows = table.find_elements(By.TAG_NAME, "tr")
+    assert "1: Buy peacock feathers" in [
+        row.text for row in rows
+    ], f"First to-do item did not appear in table. Contents were:\n{table.text}"
+    assert "2: Use peacock feathers to make a fly" in [
+        row.text for row in rows
+    ], f"Second to-do item did not appear in table. Contents were:\n{table.text}"
 
     # Edith wonders whether the site will remember her list. Then she sees
     # that the site has generated a unique URL for her -- there is some
     # explanatory text to that effect.
+    pytest.fail("Finish the test!!!")
 
     # She visits that URL - her to-do list is still there.
 
