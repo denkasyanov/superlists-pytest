@@ -4,5 +4,5 @@ Application for managing To-Do lists based on excellent [Test-Driven Development
 
 ## Demo
 
-Production website: [superlists-pytest.tk](superlists-pytest.tk)
-Staging website: [superlists-pytest-staging.tk](superlists-pytest-staging.tk)
+Production website: [superlists-pytest.tk](https://superlists-pytest.tk)  
+Staging website: [superlists-pytest-staging.tk](https://superlists-pytest-staging.tk)
