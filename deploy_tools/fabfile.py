@@ -2,7 +2,7 @@ import random
 from fabric.contrib.files import append, exists
 from fabric.api import cd, env, local, run
 
-REPO_URL = "https://github.com/hjwp/book-example.git"
+REPO_URL = "git@github.com:denkasyanov/superlists-pytest.git"
 
 
 def deploy():
