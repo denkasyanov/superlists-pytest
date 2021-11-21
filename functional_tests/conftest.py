@@ -44,3 +44,18 @@ def wait_for_row_in_list_table():
                 time.sleep(0.1)
 
     return wrapped
+
+
+@pytest.fixture
+def wait_for():
+    def wrapped(func):
+        start_time = time.time()
+        while True:
+            try:
+                return func()
+            except (AssertionError, WebDriverException) as e:
+                if time.time() - start_time > MAX_WAIT:
+                    raise e
+                time.sleep(0.1)
+
+    return wrapped
