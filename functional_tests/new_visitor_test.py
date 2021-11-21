@@ -1,60 +1,13 @@
-import os
 import re
-import time
 
-import pytest
 from selenium import webdriver
-from selenium.common import exceptions
-from selenium.common.exceptions import WebDriverException
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
 
 
-@pytest.fixture
-def browser():
-    browser = webdriver.Firefox()
-    yield browser
-    browser.quit()
-
-
-@pytest.fixture
-def live_server_url(live_server):
-    staging_server = os.environ.get("STAGING_SERVER")
-    if staging_server:
-        live_server_url = "http://" + staging_server
-    else:
-        live_server_url = live_server.url
-
-    yield live_server_url
-
-
-def check_for_row_in_list_table(browser, row_text):
-    table = browser.find_element(By.ID, "id_list_table")
-    rows = table.find_elements(By.TAG_NAME, "tr")
-    assert row_text in [row.text for row in rows]
-
-
-MAX_WAIT = 5
-
-
-def wait_for_row_in_list_table(browser, row_text):
-    start_time = time.time()
-    while True:
-        try:
-            table = browser.find_element(By.ID, "id_list_table")
-            rows = table.find_elements(By.TAG_NAME, "tr")
-            assert row_text in [row.text for row in rows]
-            return
-        except (AssertionError, WebDriverException) as e:
-            if time.time() - start_time > MAX_WAIT:
-                raise e
-            time.sleep(0.1)
-
-
-# new visitor
-
-
-def test_can_start_a_list_for_one_user(live_server_url, browser):
+def test_can_start_a_list_for_one_user(
+    live_server_url, browser, wait_for_row_in_list_table
+):
     # Edith has heard about a cool new online to-do app. She goes
     # to check out its homepage
     browser.get(live_server_url)
@@ -90,7 +43,9 @@ def test_can_start_a_list_for_one_user(live_server_url, browser):
     # Satisfied, she goes back to sleep
 
 
-def test_multiple_users_can_start_lists_at_different_urls(live_server_url, browser):
+def test_multiple_users_can_start_lists_at_different_urls(
+    live_server_url, browser, wait_for_row_in_list_table
+):
     # Edith starts a new to-do list
     browser.get(live_server_url)
     inputbox = browser.find_element(By.ID, "id_new_item")
@@ -132,25 +87,3 @@ def test_multiple_users_can_start_lists_at_different_urls(live_server_url, brows
     assert "Buy milk" in page_text
 
     browser.quit()
-
-
-def test_layout_and_styling(live_server_url, browser):
-    # Edith goes to the home page
-    browser.get(live_server_url)
-    browser.set_window_size(1024, 768)
-
-    # She notices the input box is nicely centered
-    inputbox = browser.find_element(By.ID, "id_new_item")
-    assert inputbox.location["x"] + inputbox.size["width"] / 2 == pytest.approx(
-        512, abs=10
-    )
-
-    # She starts a new list and sees the input is nicely
-    # centered there too
-    inputbox.send_keys("testing")
-    inputbox.send_keys(Keys.ENTER)
-    wait_for_row_in_list_table(browser, "1: testing")
-    inputbox = browser.find_element(By.ID, "id_new_item")
-    assert inputbox.location["x"] + inputbox.size["width"] / 2 == pytest.approx(
-        512, abs=10
-    )
