@@ -4,9 +4,9 @@ Django application for managing To-Do lists based on excellent [Test-Driven Deve
 
 ## Demo
 ### Production
-[![Website shields.io](https://img.shields.io/website-up-down-green-red/http/superlists-pytest.tk.svg)](http://superlists-pytest.tk/)  
+[![Website shields.io](https://img.shields.io/website-up-down-green-red/http/superlists-pytest.tk.svg?label=superlists-pytest.tk%20status)](http://superlists-pytest.tk/)  
 [superlists-pytest.tk](http://superlists-pytest.tk)
 
 ### Staging
-[![Website shields.io](https://img.shields.io/website-up-down-green-red/http/superlists-pytest-staging.tk.svg)](http://superlists-pytest-staging.tk/)  
+[![Website shields.io](https://img.shields.io/website-up-down-green-red/http/superlists-pytest-staging.tk.svg?label=superlists-pytest-staging.tk%20status)](http://superlists-pytest-staging.tk/)  
 [superlists-pytest-staging.tk](http://superlists-pytest-staging.tk)
