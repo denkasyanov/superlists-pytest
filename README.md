@@ -1,8 +1,12 @@
 # Superlists
 
-Application for managing To-Do lists based on excellent [Test-Driven Development with Python book by Harry. J.W. Percival](https://www.obeythetestinggoat.com) but using [pytest](https://github.com/pytest-dev/pytest/) testing framework with [pytest-django](https://github.com/pytest-dev/pytest-django) plugin instead of built-in Django testing framework.
+Django application for managing To-Do lists based on excellent [Test-Driven Development with Python book by Harry. J.W. Percival](https://www.obeythetestinggoat.com) but using [pytest](https://github.com/pytest-dev/pytest/) testing framework with [pytest-django](https://github.com/pytest-dev/pytest-django) plugin instead of built-in Django testing framework and up-to-date versions of everything.
 
 ## Demo
+### Production
+[![Website shields.io](https://img.shields.io/website-up-down-green-red/http/superlists-pytest.tk.svg)](http://superlists-pytest.tk/)  
+[superlists-pytest.tk](http://superlists-pytest.tk)
 
-Production website: [superlists-pytest.tk](http://superlists-pytest.tk)  
-Staging website: [superlists-pytest-staging.tk](http://superlists-pytest-staging.tk)
+### Staging
+[![Website shields.io](https://img.shields.io/website-up-down-green-red/http/superlists-pytest-staging.tk.svg)](http://superlists-pytest-staging.tk/)  
+[superlists-pytest-staging.tk](http://superlists-pytest-staging.tk)
