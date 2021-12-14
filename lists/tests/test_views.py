@@ -33,6 +33,13 @@ def test_uses_list_template(client):
     assertTemplateUsed(response, "list.html")
 
 
+def test_passes_correct_list_to_template(client):
+    other_list = List.objects.create()
+    correct_list = List.objects.create()
+    response = client.get(f"/lists/{correct_list.id}/")
+    assert response.context["list"], correct_list
+
+
 def test_displays_only_items_for_that_list(client):
 
     correct_list = List.objects.create()
@@ -52,11 +59,31 @@ def test_displays_only_items_for_that_list(client):
     assertNotContains(response, "other list item 2")
 
 
-def test_passes_correct_list_to_template(client):
+def test_can_save_a_post_request_to_an_existing_list(client):
     other_list = List.objects.create()
     correct_list = List.objects.create()
-    response = client.get(f"/lists/{correct_list.id}/")
-    assert response.context["list"], correct_list
+
+    client.post(
+        f"/lists/{correct_list.id}/",
+        data={"item_text": "A new item for an existing list"},
+    )
+    assert Item.objects.count() == 1
+
+    new_item = Item.objects.first()
+    assert new_item.text == "A new item for an existing list"
+    assert new_item.list == correct_list
+
+
+def test_post_redirects_to_list_view(client):
+    other_list = List.objects.create()
+    correct_list = List.objects.create()
+
+    response = client.post(
+        f"/lists/{correct_list.id}/",
+        data={"item_text": "A new item for an existing list"},
+    )
+
+    assertRedirects(response, f"/lists/{correct_list.id}/")
 
 
 # new list tests
@@ -88,33 +115,3 @@ def test_invalid_list_items_are_not_saved(client):
     client.post("/lists/new", data={"item_text": ""})
     assert List.objects.count() == 0
     assert Item.objects.count() == 0
-
-
-# new item tests
-
-
-def test_can_save_a_post_request_to_an_existing_list(client):
-    other_list = List.objects.create()
-    correct_list = List.objects.create()
-
-    client.post(
-        f"/lists/{correct_list.id}/add_item",
-        data={"item_text": "A new item for an existing list"},
-    )
-    assert Item.objects.count() == 1
-
-    new_item = Item.objects.first()
-    assert new_item.text == "A new item for an existing list"
-    assert new_item.list == correct_list
-
-
-def test_redirects_to_list_view(client):
-    other_list = List.objects.create()
-    correct_list = List.objects.create()
-
-    response = client.post(
-        f"/lists/{correct_list.id}/add_item",
-        data={"item_text": "A new item for an existing list"},
-    )
-
-    assertRedirects(response, f"/lists/{correct_list.id}/")
