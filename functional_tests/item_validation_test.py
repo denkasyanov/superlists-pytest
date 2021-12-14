@@ -1,7 +1,7 @@
 import pytest
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
-from pytest_django.asserts import assertContains
+from pytest_django.asserts import assertHTMLEqual
 
 
 def test_cannot_add_empty_list_items(
@@ -16,7 +16,7 @@ def test_cannot_add_empty_list_items(
     # that list items cannot be blank
 
     wait_for(
-        lambda: assertContains(
+        lambda: assertHTMLEqual(
             browser.find_element(By.CSS_SELECTOR, ".has-errors").text,
             "You can't have an empty list item",
         )
@@ -36,7 +36,7 @@ def test_cannot_add_empty_list_items(
 
     # She receives a similar warning on the list page
     wait_for(
-        lambda: assertContains(
+        lambda: assertHTMLEqual(
             browser.find_element(By.CSS_SELECTOR, ".has-errors").text,
             "You can't have an empty list item",
         )
