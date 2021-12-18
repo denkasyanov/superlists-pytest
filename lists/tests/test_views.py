@@ -66,7 +66,7 @@ def test_can_save_a_post_request_to_an_existing_list(client):
 
     client.post(
         f"/lists/{correct_list.id}/",
-        data={"item_text": "A new item for an existing list"},
+        data={"text": "A new item for an existing list"},
     )
     assert Item.objects.count() == 1
 
@@ -81,7 +81,7 @@ def test_post_redirects_to_list_view(client):
 
     response = client.post(
         f"/lists/{correct_list.id}/",
-        data={"item_text": "A new item for an existing list"},
+        data={"text": "A new item for an existing list"},
     )
 
     assertRedirects(response, f"/lists/{correct_list.id}/")
@@ -90,7 +90,7 @@ def test_post_redirects_to_list_view(client):
 def test_validation_errors_end_up_on_lists_page(client):
     list_ = List.objects.create()
 
-    response = client.post(f"/lists/{list_.id}/", data={"item_text": ""})
+    response = client.post(f"/lists/{list_.id}/", data={"text": ""})
     assert response.status_code == 200
     assertTemplateUsed(response, "list.html")
     expected_error = escape("You can't have an empty list item")
@@ -101,7 +101,7 @@ def test_validation_errors_end_up_on_lists_page(client):
 
 
 def test_can_save_a_post_request(client):
-    response = client.post("/lists/new", data={"item_text": "A new list item"})
+    response = client.post("/lists/new", data={"text": "A new list item"})
 
     assert Item.objects.count() == 1
     new_item = Item.objects.first()
@@ -109,13 +109,13 @@ def test_can_save_a_post_request(client):
 
 
 def test_redirects_after_post(client):
-    response = client.post("/lists/new", data={"item_text": "A new list item"})
+    response = client.post("/lists/new", data={"text": "A new list item"})
     list_ = List.objects.first()
     assertRedirects(response, f"/lists/{list_.id}/")
 
 
 def test_validation_errors_are_sent_back_to_home_page_template(client):
-    response = client.post("/lists/new", data={"item_text": ""})
+    response = client.post("/lists/new", data={"text": ""})
     assert response.status_code == 200
     assertTemplateUsed(response, "home.html")
     expected_error = escape("You can't have an empty list item")
@@ -123,7 +123,7 @@ def test_validation_errors_are_sent_back_to_home_page_template(client):
 
 
 def test_invalid_list_items_are_not_saved(client):
-    client.post("/lists/new", data={"item_text": ""})
+    client.post("/lists/new", data={"text": ""})
     assert List.objects.count() == 0
     assert Item.objects.count() == 0
 
