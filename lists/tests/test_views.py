@@ -10,6 +10,7 @@ from pytest_django.asserts import (
     assertRedirects,
     assertTemplateUsed,
 )
+from lists.forms import ItemForm
 
 from lists.models import Item, List
 from lists.views import home_page
@@ -125,3 +126,16 @@ def test_invalid_list_items_are_not_saved(client):
     client.post("/lists/new", data={"item_text": ""})
     assert List.objects.count() == 0
     assert Item.objects.count() == 0
+
+
+# home page tests
+
+
+def test_uses_home_template(client):
+    response = client.get("/")
+    assertTemplateUsed(response, "home.html")
+
+
+def test_home_page_uses_item_form(client):
+    response = client.get("/")
+    assert isinstance(response.context["form"], ItemForm)
