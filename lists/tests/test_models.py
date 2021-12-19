@@ -31,7 +31,7 @@ def test_saving_and_retrieveing_items():
     assert first_saved_item.list == list_
 
     second_saved_item = saved_items[1]
-    assert second_saved_item.text == "Item the second"
+    assert second_saved_item.text == "Item the secondd"
     assert second_saved_item.list == list_
 
 
