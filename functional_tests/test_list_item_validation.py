@@ -14,38 +14,33 @@ def test_cannot_add_empty_list_items(
     browser.get(live_server_url)
     get_item_input_box(browser).send_keys(Keys.ENTER)
 
-    # The home page refreshes, and there is an error message saying
-    # that list items cannot be blank
+    # The browser intercepts the request, and does not load the
+    # list page
+    wait_for(lambda: browser.find_element(By.CSS_SELECTOR, "#id_text:invalid"))
 
-    wait_for(
-        lambda: assertHTMLEqual(
-            browser.find_element(By.CSS_SELECTOR, ".has-errors").text,
-            "You can't have an empty list item",
-        )
-    )
+    # She starts typing some text for the new item and the error disappears
+    get_item_input_box(browser).send_keys("Buy milk")
+    wait_for(lambda: browser.find_element(By.CSS_SELECTOR, "#id_text:valid"))
+
+    # And she can submit it successfully
+    get_item_input_box(browser).send_keys(Keys.ENTER)
+    wait_for_row_in_list_table(browser, "1: Buy milk")
+
     ### element = WebDriverWait(browser, 3).until(
     ###     EC.presence_of_element_located((By.CSS_SELECTOR, ".has-error"))
     ### )
     ### assert element.text == "You can't have an empty list item"
 
-    # She tries again with some text for the item, which now works
-    get_item_input_box(browser).send_keys("Buy milk")
-    get_item_input_box(browser).send_keys(Keys.ENTER)
-    wait_for_row_in_list_table(browser, "1: Buy milk")
-
     # Perversely, she now decides to submit a second blank list item
     get_item_input_box(browser).send_keys(Keys.ENTER)
 
-    # She receives a similar warning on the list page
-    wait_for(
-        lambda: assertHTMLEqual(
-            browser.find_element(By.CSS_SELECTOR, ".has-errors").text,
-            "You can't have an empty list item",
-        )
-    )
+    # Again, the browser will not comply
+    wait_for_row_in_list_table(browser, "1: Buy milk")
+    wait_for(lambda: browser.find_element(By.CSS_SELECTOR, "#id_text:invalid"))
 
     # And she can correct it by filling some text in
     get_item_input_box(browser).send_keys("Make tea")
+    wait_for(lambda: browser.find_element(By.CSS_SELECTOR, "#id_text:valid"))
     get_item_input_box(browser).send_keys(Keys.ENTER)
     wait_for_row_in_list_table(browser, "1: Buy milk")
     wait_for_row_in_list_table(browser, "2: Make tea")
