@@ -2,6 +2,7 @@ black
 Django
 gunicorn
 pytest
+pytest-cov
 pytest-django
 pytz
 selenium
