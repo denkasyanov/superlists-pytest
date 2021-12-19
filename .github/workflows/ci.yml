@@ -1,0 +1,53 @@
+name: Tests
+
+on: [push]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+    
+    steps:
+      - uses: actions/checkout@v2
+      
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v2
+        with:
+          python-version: "3.10"
+
+      - uses: actions/cache@v2
+        with:
+          path: venv
+          key: ${{ hashFiles('requirements.txt') }}
+          
+      - name: Install dependencies
+        if: steps.cache-primes.outputs.cache-hit != 'true'
+        run: |
+          python -m venv venv
+          . venv/bin/activate
+          pip install --upgrade pip pip-tools
+          pip install -r requirements.txt
+          
+
+  
+  test:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: actions/setup-python@v2
+        with:
+          python-version: "3.10"
+
+      - uses: actions/cache@v2
+        with:
+          path: venv
+          key: ${{ hashFiles('requirements.txt') }}
+
+      - name: Test with pytest
+        env:
+          PYTEST_ADDOPTS: "--color=yes"
+        run: |
+          . venv/bin/activate
+          pytest lists
