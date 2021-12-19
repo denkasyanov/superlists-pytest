@@ -1,0 +1,7 @@
+black
+Django
+gunicorn
+pytest
+pytest-django
+pytz
+selenium
