@@ -44,3 +44,25 @@ def test_cannot_add_empty_list_items(
     get_item_input_box(browser).send_keys(Keys.ENTER)
     wait_for_row_in_list_table(browser, "1: Buy milk")
     wait_for_row_in_list_table(browser, "2: Make tea")
+
+
+def test_cannot_add_duplicate_items(
+    live_server_url, browser, wait_for_row_in_list_table, wait_for
+):
+    # Edith goes to the home page and starts a new list
+    browser.get(live_server_url)
+    get_item_input_box(browser).send_keys("Buy wellies")
+    get_item_input_box(browser).send_keys(Keys.ENTER)
+    wait_for_row_in_list_table(browser, "1: Buy wellies")
+
+    # She accidentally tries to enter a duplicate item
+    get_item_input_box(browser).send_keys("Buy wellies")
+    get_item_input_box(browser).send_keys(Keys.ENTER)
+
+    # She sees a helpful error message
+    wait_for(
+        lambda: assertHTMLEqual(
+            browser.find_element(By.CSS_SELECTOR, ".has-error").text,
+            "You've already got this in your list",
+        )
+    )
