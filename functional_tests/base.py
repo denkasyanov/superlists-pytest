@@ -12,3 +12,8 @@ def get_error_element(browser):
 def assertTrue(test):
     """Hack for using pytest's asserts in the Book's `wait_for` functions."""
     assert test == True
+
+
+def assertIn(what, where):
+    """Hack for using pytest's asserts in the Book's `wait_for` functions."""
+    assert what in where
