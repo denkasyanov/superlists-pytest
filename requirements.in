@@ -1,5 +1,6 @@
 black
-Django
+django
+fabric3
 gunicorn
 pytest
 pytest-cov
