@@ -10,7 +10,12 @@ from pytest_django.asserts import (
     assertRedirects,
     assertTemplateUsed,
 )
-from lists.forms import EMPTY_ITEM_ERROR, ItemForm
+from lists.forms import (
+    DUPLICATE_ITEM_ERROR,
+    EMPTY_ITEM_ERROR,
+    ExistingListItemForm,
+    ItemForm,
+)
 
 from lists.models import Item, List
 from lists.views import home_page
@@ -105,7 +110,7 @@ def test_for_invalid_input_renders_list_template(client):
 
 def test_for_invalid_input_passes_form_to_template(client):
     response = post_invalid_input(client)
-    assert isinstance(response.context["form"], ItemForm)
+    assert isinstance(response.context["form"], ExistingListItemForm)
 
 
 def test_for_invalid_input_shows_error_on_page(client):
@@ -113,14 +118,13 @@ def test_for_invalid_input_shows_error_on_page(client):
     assertContains(response, escape(EMPTY_ITEM_ERROR))
 
 
-@pytest.mark.skip()
 def test_duplicate_item_validation_errors_end_up_on_lists_page(client):
     list1 = List.objects.create()
     item1 = Item.objects.create(list=list1, text="textey")
 
     response = client.post(f"/lists/{list1.id}/", data={"text": "textey"})
 
-    expected_error = escape("You've already got this in your list")
+    expected_error = escape(DUPLICATE_ITEM_ERROR)
     assertContains(response, expected_error)
     assertTemplateUsed(response, "list.html")
     assert Item.objects.all().count() == 1
@@ -129,7 +133,7 @@ def test_duplicate_item_validation_errors_end_up_on_lists_page(client):
 def test_displays_item_form(client):
     list_ = List.objects.create()
     response = client.get(f"/lists/{list_.id}/")
-    assert isinstance(response.context["form"], ItemForm)
+    assert isinstance(response.context["form"], ExistingListItemForm)
     assertContains(response, 'name="text"')
 
 
