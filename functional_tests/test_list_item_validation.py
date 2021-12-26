@@ -3,7 +3,7 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
 from pytest_django.asserts import assertHTMLEqual
 
-from .base import get_item_input_box
+from .base import get_error_element, get_item_input_box
 
 
 def test_cannot_add_empty_list_items(
@@ -62,7 +62,7 @@ def test_cannot_add_duplicate_items(
     # She sees a helpful error message
     wait_for(
         lambda: assertHTMLEqual(
-            browser.find_element(By.CSS_SELECTOR, ".has-error").text,
+            get_error_element(browser).text,
             "You've already got this in your list",
         )
     )
