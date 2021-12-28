@@ -1,4 +1,4 @@
-from unittest.mock import patch
+from unittest.mock import call, patch
 
 import pytest
 from pytest_django.asserts import assertRedirects
@@ -84,3 +84,24 @@ def test_sends_link_to_login_using_token_uid(mock_send_mail, client):
 def test_redirects_to_home_page(client):
     response = client.get("/accounts/login/?token=abcd123")
     assertRedirects(response, "/")
+
+
+@patch("accounts.views.auth")
+def test_calls_authenticate_with_uid_from_get_request(mock_auth, client):
+    client.get("/accounts/login/?token=abcd123")
+    assert mock_auth.authenticate.call_args == call(uid="abcd123")
+
+
+@patch("accounts.views.auth")
+def test_calls_auth_login_with_user_if_there_is_one(mock_auth, client):
+    response = client.get("/accounts/login/?token=abcd123")
+    assert mock_auth.login.call_args == call(
+        response.wsgi_request, mock_auth.authenticate.return_value
+    )
+
+
+@patch("accounts.views.auth")
+def test_does_not_login_if_user_is_not_authenticated(mock_auth, client):
+    mock_auth.authenticate.return_value = None
+    client.get("/accounts/login/?token=abcd123")
+    assert not mock_auth.login.called
