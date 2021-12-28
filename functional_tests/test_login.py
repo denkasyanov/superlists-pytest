@@ -47,3 +47,11 @@ def test_can_get_email_link_to_log_in(live_server_url, browser, wait_for):
     wait_for(lambda: browser.find_element(By.LINK_TEXT, "Log out"))
     navbar = browser.find_element(By.CSS_SELECTOR, ".navbar")
     assert TEST_EMAIL in navbar.text
+
+    # Now she logs out
+    browser.find_element(By.LINK_TEXT, "Log out").click()
+
+    # She is logged out
+    wait_for(lambda: browser.find_element(By.NAME, "email"))
+    navbar = browser.find_element(By.CSS_SELECTOR, ".navbar")
+    assert TEST_EMAIL not in navbar.text
