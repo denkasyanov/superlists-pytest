@@ -209,9 +209,9 @@ packaging==21.3 \
     --hash=sha256:dd47c42927d89ab911e606518907cc2d3a1f38bbd026385970643f9c5b8ecfeb \
     --hash=sha256:ef103e05f519cdc783ae24ea4e2e0f508a9c99b2d4969652eed6a2e1ea5bd522
     # via pytest
-paramiko==2.9.1 \
-    --hash=sha256:a1fdded3b55f61d23389e4fe52d9ae428960ac958d2edf50373faa5d8926edd0 \
-    --hash=sha256:db5d3f19607941b1c90233588d60213c874392c4961c6297037da989c24f8070
+paramiko==2.9.3 \
+    --hash=sha256:0b48289220e24ced2597f875b3c46eb597f3a1893e4b5e2069e62df88895a54d \
+    --hash=sha256:1d894661b07ba908eba3cf16b00c64742d20e99851a760f627f4a5f5b1786379
     # via fabric3
 pathspec==0.9.0 \
     --hash=sha256:7d15c4ddb0b5c802d161efc417ec1a2558ea2653c2e8ad9c19098201dc1c993a \
@@ -294,6 +294,7 @@ six==1.16.0 \
     # via
     #   bcrypt
     #   fabric3
+    #   paramiko
     #   pynacl
     #   pyopenssl
 sniffio==1.2.0 \
